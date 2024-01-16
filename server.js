@@ -1,38 +1,25 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const mongoose = require('./database');
-
+const mongoose = require('./database.js');
 const app = express();
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-// Routes
-app.get('/posts', async (req, res) => {
-    try {
-        const posts = await mongoose.find();
-        res.json(posts);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
+// Existing endpoints...
 
-app.post('/posts', async (req, res) => {
-    const post = new mongoose({
-        text: req.body.text,
-        date: new Date()
+app.post('/users', async (req, res) => {
+    const user = new mongoose.User({
+        username: req.body.username,
+        password: req.body.password // In a real-world scenario, you should hash the password
     });
 
     try {
-        const newPost = await post.save();
-        res.status(201).json(newPost);
+        const newUser = await user.save();
+        res.status(201).json(newUser);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
 });
 
-// Start server
+// Start the server
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server started on port ${port}`));
+app.listen(port, () => console.log(`Server is running on port ${port}`));
